@@ -9,3 +9,14 @@ A modified version of **[3x1, ..., 8x1 Balancers (Balancer Variants)](https://mo
 All credit for the original mod goes to Fyshi1. The first commit in this repository is the unmodified mod.io release; everything after it is my change.
 
 The original author did not publish a license. This repository shares my modifications for reference only; if you are the original author and want it changed or taken down, please open an issue.
+
+## My changes
+
+- Adds **9x1 and 10x1** balancers (with their own sprites and blueprint sprites).
+- Edited sprites.
+- `updateVariants` reworked: reuses the existing BeltUnderlays component instead of adding a new one each time.
+- Version 1.1.3.
+
+## Installation
+
+Put the `.js` file in your shapez.io `mods` folder (on Windows: `%APPDATA%\shapez.io\mods`) and restart the game.
