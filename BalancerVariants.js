@@ -3,7 +3,7 @@ const METADATA = {
   website: "https://github.com/Fysheep",
   author: "Fyshi",
   name: "Balancer-Variants",
-  version: "1.1.3",
+  version: "1.2.0",
   id: "Balancer-Variants.Fyshi",
   description: "A Mod which adds various forms of balancers from 3x1 to 10x1",
   minimumGameVersion: ">=1.5.0",
@@ -11,32 +11,43 @@ const METADATA = {
 
 class Mod extends shapez.Mod {
   init() {
+    // Compact variant bar: each NxN balancer is shown as a single square tile
+    // with its size written on it, instead of a 75-100px wide sprite.
     this.modInterface.registerCss(`
-    #ingame_HUD_PlacerVariants .variants .variant .iconWrap[data-tile-w="5"][data-tile-h="1"] {
-      width: calc(100px*var(--ui-scale));
-      height: calc(20px * var(--ui-scale));
-  }
-  #ingame_HUD_PlacerVariants .variants .variant .iconWrap[data-tile-w="6"][data-tile-h="1"] {
-    width: calc(100px*var(--ui-scale));
-    height: calc(16.6px * var(--ui-scale))
-}
-#ingame_HUD_PlacerVariants .variants .variant .iconWrap[data-tile-w="7"][data-tile-h="1"] {
-  width: calc(100px*var(--ui-scale));
-  height: calc(14.2px * var(--ui-scale))
-}
-#ingame_HUD_PlacerVariants .variants .variant .iconWrap[data-tile-w="8"][data-tile-h="1"] {
-  width: calc(100px*var(--ui-scale));
-  height: calc(12.5px * var(--ui-scale))
-}
-#ingame_HUD_PlacerVariants .variants .variant .iconWrap[data-tile-w="9"][data-tile-h="1"] {
-  width: calc(100px*var(--ui-scale));
-  height: calc(11.1px * var(--ui-scale))
-}
-#ingame_HUD_PlacerVariants .variants .variant .iconWrap[data-tile-w="10"][data-tile-h="1"] {
-  width: calc(100px*var(--ui-scale));
-  height: calc(10px * var(--ui-scale))
-}
-            `);
+      #ingame_HUD_PlacerVariants .variants .variant.bvCompact .iconWrap {
+        width: calc(25px * var(--ui-scale));
+        height: calc(25px * var(--ui-scale));
+        opacity: 0.35;
+      }
+      #ingame_HUD_PlacerVariants .variants .variant.bvCompact .bvSize {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        color: #fff;
+        font-family: GameFont, sans-serif;
+        font-weight: 700;
+        font-size: calc(11px * var(--ui-scale));
+        text-shadow: 0 0 3px #000, 0 0 2px #000;
+      }
+    `);
+
+    this.modInterface.runAfterMethod(shapez.HUDBuildingPlacer, "rerenderVariants", function () {
+      for (const variantEl of this.variantsElement.querySelectorAll(".variant")) {
+        const label = variantEl.querySelector(".label");
+        const match = label && /^B_Variants_(\d+)$/.exec(label.textContent);
+        if (!match) {
+          continue;
+        }
+        variantEl.classList.add("bvCompact");
+        const size = document.createElement("div");
+        size.className = "bvSize";
+        size.textContent = match[1];
+        variantEl.appendChild(size);
+      }
+    });
 
     for (let i = 3; i <= 10; i++) {
       let _bData = {
